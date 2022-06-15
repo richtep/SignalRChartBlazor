@@ -9,23 +9,22 @@ namespace ChartServer.Controllers
     [ApiController]
     public class MarketController : ControllerBase
     {
-        private IHubContext<MarketHub> marketHub;
-        private TimeWatcher watcher;
+        private readonly IHubContext<MarketHub> _marketHub;
+        private readonly TimeWatcher _watcher;
 
         public MarketController(IHubContext<MarketHub> mktHub, TimeWatcher watch)
         {
-            marketHub = mktHub;
-            watcher = watch;
+            _marketHub = mktHub;
+            _watcher = watch;
         }
         [HttpGet]
         public IActionResult Get()
         {
-            if(!watcher.IsWatcherStarted)
+            if(!_watcher.IsWatcherStarted)
             {
-                watcher.Watcher(()=>marketHub.Clients.All.SendAsync("SendMarketStatusData",MarketDataProvider.GetMarketData()));
+                _watcher.Watcher(()=>_marketHub.Clients.All.SendAsync("SendMarketStatusData",MarketDataProvider.GetMarketData()));
             }
-
-            return Ok(new { Message = "Request Completed" });
+            return Ok(new {Message = "Request Completed"});
         }
     }
 }

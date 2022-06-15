@@ -1,19 +1,19 @@
-﻿namespace MarketChartClient.HttpCaller
-{
+﻿namespace MarketChartClient.HttpCaller;
+
     public class MarketDataCaller
     {
-        private HttpClient httpClient;
+        private readonly HttpClient _httpClient;
 
         public MarketDataCaller(HttpClient http)
         {
-            httpClient = http;
+            _httpClient = http;
         }
 
         public async Task GetMarketDataAsync()
         {
             try
             {
-                var response = await httpClient.GetAsync("marketdata");
+                var response = await _httpClient.GetAsync("marketdata");
 
                 if (!response.IsSuccessStatusCode)
                     throw new Exception("Something is wrong with the connection make sure that the server is running.");
@@ -29,7 +29,7 @@
         {
             try
             {
-                var response = await httpClient.GetAsync("https://localhost:7193/api/Market");
+                var response = await _httpClient.GetAsync("https://localhost:7193/api/Market");
                 if (!response.IsSuccessStatusCode)
                     throw new Exception("Something is wrong with the connection so get call is not executing.");
             }
@@ -41,4 +41,4 @@
         }
          
     }
-}
+

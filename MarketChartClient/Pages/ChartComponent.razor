@@ -1,9 +1,8 @@
 ﻿@page "/chartui"
 @using  Microsoft.AspNetCore.SignalR.Client;
 @using SharedModels
-@using System.Text.Json
-@inject IJSRuntime js
-@inject MarketChartClient.HttpCaller.MarketDataCaller service;
+@inject IJSRuntime _js
+@inject MarketChartClient.HttpCaller.MarketDataCaller _service;
 <h3>Chart Component</h3>
 
 <div>
@@ -13,11 +12,11 @@
             <tr>
                 <td>
                     <button class="btn btn-success"
-                    @onclick="@generateLineChartTask">Line Chart</button>
+                    @onclick="@_generateLineChartTask">Line Chart</button>
                 </td>
                  <td>
                     <button class="btn btn-danger" 
-                    @onclick="@generateBarChartTask">Bar Chart</button>
+                    @onclick="@_generateBarChartTask">Bar Chart</button>
                 </td>
             </tr>
         </tbody>
@@ -42,31 +41,31 @@
     </table>
     <hr/>
     <div class="container">
-        @ConnectionStatusMessage
+        @_connectionStatusMessage
     </div>
 </div>
 </div>
 
 
 @code {
-    private HubConnection? hubConn;
-    private string? ConnectionStatusMessage;
-    public List<Market> MarketData = new List<Market>(); 
-    public List<Market> MarketReceivedData = new List<Market>(); 
+    private HubConnection _hubConn;
+    private string _connectionStatusMessage;
+    public List<Market> MarketData = new (); 
+    public List<Market> MarketReceivedData = new (); 
 
 
-    private  List<string> xSource;
-    private  List<int> ySource;
-    private List<object> source; 
+    private  List<string> _xSource;
+    private  List<int> _ySource;
+    private List<object> _source; 
 
     protected override async Task OnInitializedAsync()
     {
 
-        xSource = new List<string>();
-        ySource = new List<int>();
-        source = new List<object>();  
+        _xSource = new List<string>();
+        _ySource = new List<int>();
+        _source = new List<object>();  
 
-        await service.GetMarketEndpoint();
+        await _service.GetMarketEndpoint();
         await Start();
          
     }
@@ -74,43 +73,41 @@
 
     private async Task Start()
     {
-        hubConn = new HubConnectionBuilder().WithUrl("https://localhost:7193/marketdata").Build();
-        await hubConn.StartAsync();
-        if(hubConn.State == HubConnectionState.Connected )
-            ConnectionStatusMessage = "Connection is established Successfully...";
-        else
-            ConnectionStatusMessage = "Connection is not established...";
+        _hubConn = new HubConnectionBuilder().WithUrl("https://localhost:7193/marketdata").Build();
+        await _hubConn.StartAsync();
+
+        _connectionStatusMessage = _hubConn.State == HubConnectionState.Connected ? "Connection is established Successfully..." : "Connection is not established...";
     }
 
     private void MarketDataListener(string chartType)
     {
-        hubConn.On<List<Market>>("SendMarketStatusData", async (data) =>
+        _hubConn.On<List<Market>>("SendMarketStatusData", async (data) =>
         {
             MarketData = new List<Market>(); 
             foreach (var item in data)
             {
-                Console.WriteLine($"Company Name: {item.CompanyName}, Volumn: {item.Volume}");
-                xSource.Add(item.CompanyName);
-                ySource.Add(item.Volume);
+                Console.WriteLine($"Company Name: {item.CompanyName}, Volume: {item.Volume}");
+                _xSource.Add(item.CompanyName);
+                _ySource.Add(item.Volume);
             }
 
 
-            source.Add(ySource);
-            source.Add(xSource);
+            _source.Add(_ySource);
+            _source.Add(_xSource);
 
 
             MarketData = data;
 
             StateHasChanged();
-            await js.InvokeAsync<object>(chartType, source.ToArray());
-            xSource.Clear();
-            ySource.Clear();
+            await _js.InvokeAsync<object>(chartType, _source.ToArray());
+            _xSource.Clear();
+            _ySource.Clear();
         });
     }
 
     private void ReceivedMarketDataListener()
     {
-        hubConn.On<List<Market>>("CommunicateMarketData", (data) =>
+        _hubConn?.On<List<Market>>("CommunicateMarketData", data =>
         {
             MarketReceivedData = data;
             StateHasChanged();
@@ -118,23 +115,18 @@
     }
 
  
-
-    public async Task Dispose()
-    {
-        await hubConn.DisposeAsync();
-    }
-
-
-    async Task  generateLineChartTask()
+    public async Task Dispose() => await _hubConn.DisposeAsync();
+    
+    async Task _generateLineChartTask()
     {
         MarketDataListener("marketLineChart");
          ReceivedMarketDataListener();
-        await service.GetMarketDataAsync();
+        await _service.GetMarketDataAsync();
     }
-     async Task   generateBarChartTask()
+     async Task _generateBarChartTask()
     {
       MarketDataListener("marketBarChart"); 
        ReceivedMarketDataListener();
-        await service.GetMarketDataAsync();
+         await _service.GetMarketDataAsync();
     }
 }

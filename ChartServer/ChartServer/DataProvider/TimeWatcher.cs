@@ -5,10 +5,10 @@
     /// </summary>
     public class TimeWatcher
     {
-        private Action? Executor;
-        private Timer? timer;
+        private Action? _executor;
+        private Timer? _timer;
         // we need to auto-reset the event before the execution
-        private AutoResetEvent? autoResetEvent;
+        private AutoResetEvent? _autoResetEvent;
 
 
         public DateTime WatcherStarted { get; set; }
@@ -21,18 +21,18 @@
         /// </summary>
         public void Watcher(Action execute)
         {
-            int callBackDelayBeforeInvokeCallback = 1000;
-            int timeIntervalBetweenInvokeCallback = 2000;
-            Executor = execute;
-            autoResetEvent = new AutoResetEvent(false);
-            timer = new Timer((object? obj) => {
-                Executor();
-                if ((DateTime.Now - WatcherStarted).TotalSeconds > 60)
-                {
-                    IsWatcherStarted = false;
-                    timer.Dispose();
-                }
-            }, autoResetEvent, callBackDelayBeforeInvokeCallback, timeIntervalBetweenInvokeCallback);
+            const int callBackDelayBeforeInvokeCallback = 1000;
+            const int timeIntervalBetweenInvokeCallback = 2000;
+            _executor = execute;
+            _autoResetEvent = new AutoResetEvent(false);
+            _timer = new Timer(
+                (object? obj) => 
+            {
+                _executor();
+                if ((DateTime.Now - WatcherStarted).TotalSeconds <= 60) return;
+                IsWatcherStarted = false;
+                _timer?.Dispose();
+            }, _autoResetEvent, callBackDelayBeforeInvokeCallback, timeIntervalBetweenInvokeCallback);
 
             WatcherStarted = DateTime.Now;
             IsWatcherStarted = true;
