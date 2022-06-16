@@ -29,8 +29,9 @@
         {
             try
             {
-                var response = await _httpClient.GetAsync("https://localhost:7193/api/Market");
-                if (!response.IsSuccessStatusCode)
+            //var response = await _httpClient.GetAsync("https://localhost:7193/api/Market");
+            var response = await _httpClient.GetAsync("https://localhost:7193/api/Orangutan");
+            if (!response.IsSuccessStatusCode)
                     throw new Exception("Something is wrong with the connection so get call is not executing.");
             }
             catch (Exception ex)
