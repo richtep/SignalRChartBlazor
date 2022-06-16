@@ -1,41 +1,40 @@
-﻿namespace ChartServer.DataProvider
+﻿namespace ChartServer.DataProvider;
+
+/// <summary>
+/// This call will be used to send the data after each second to the client
+/// </summary>
+public class TimeWatcher
 {
+    private Action? _executor;
+    private Timer? _timer;
+    // we need to auto-reset the event before the execution
+    private AutoResetEvent? _autoResetEvent;
+
+
+    public DateTime WatcherStarted { get; set; }
+
+    public bool IsWatcherStarted { get; set; }
+
     /// <summary>
-    /// This call will be used to send the data after each second to the client
+    /// Method for the Timer Watcher
+    /// This will be invoked when the Controller receives the request
     /// </summary>
-    public class TimeWatcher
+    public void Watcher(Action execute)
     {
-        private Action? _executor;
-        private Timer? _timer;
-        // we need to auto-reset the event before the execution
-        private AutoResetEvent? _autoResetEvent;
-
-
-        public DateTime WatcherStarted { get; set; }
-
-        public bool IsWatcherStarted { get; set; }
-
-        /// <summary>
-        /// Method for the Timer Watcher
-        /// This will be invoked when the Controller receives the request
-        /// </summary>
-        public void Watcher(Action execute)
+        const int callBackDelayBeforeInvokeCallback = 1000;
+        const int timeIntervalBetweenInvokeCallback = 2000;
+        _executor = execute;
+        _autoResetEvent = new AutoResetEvent(false);
+        _timer = new Timer(
+            (object? obj) => 
         {
-            const int callBackDelayBeforeInvokeCallback = 1000;
-            const int timeIntervalBetweenInvokeCallback = 2000;
-            _executor = execute;
-            _autoResetEvent = new AutoResetEvent(false);
-            _timer = new Timer(
-                (object? obj) => 
-            {
-                _executor();
-                if ((DateTime.Now - WatcherStarted).TotalSeconds <= 60) return;
-                IsWatcherStarted = false;
-                _timer?.Dispose();
-            }, _autoResetEvent, callBackDelayBeforeInvokeCallback, timeIntervalBetweenInvokeCallback);
+            _executor();
+            if ((DateTime.Now - WatcherStarted).TotalSeconds <= 23) return;
+            IsWatcherStarted = false;
+            _timer?.Dispose();
+        }, _autoResetEvent, callBackDelayBeforeInvokeCallback, timeIntervalBetweenInvokeCallback);
 
-            WatcherStarted = DateTime.Now;
-            IsWatcherStarted = true;
-        }
+        WatcherStarted = DateTime.Now;
+        IsWatcherStarted = true;
     }
 }

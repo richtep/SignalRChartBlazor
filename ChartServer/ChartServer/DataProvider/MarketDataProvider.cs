@@ -9,15 +9,15 @@ namespace ChartServer.DataProvider
             var random = new Random();
             var marketData = new List<Market>()
             { 
-                new Market() { CompanyName = "MS-IT Services", Volume = random.Next(1,900)},
-                new Market() { CompanyName = "TS-IT Providers", Volume = random.Next(1,900)},
-                new Market() { CompanyName = "LS-SL Sales", Volume = random.Next(1,900)},
-                new Market() { CompanyName = "MS-Electronics", Volume = random.Next(1,900)},
-                new Market() { CompanyName = "TS-Electrical", Volume = random.Next(1,900)},
-                new Market() { CompanyName = "LS-Foods", Volume = random.Next(1,900)},
-                new Market() { CompanyName = "MS-Healthcare", Volume = random.Next(1,900)},
-                new Market() { CompanyName = "LS-Pharmas", Volume = random.Next(1,900)},
-                new Market() { CompanyName = "TS-Healthcare", Volume = random.Next(1,900)}
+                new () { CompanyName = "MS-IT Services", Volume = random.Next(1,900)},
+                new () { CompanyName = "TS-IT Providers", Volume = random.Next(1,900)},
+                new () { CompanyName = "LS-SL Sales", Volume = random.Next(1,900)},
+                new () { CompanyName = "MS-Electronics", Volume = random.Next(1,900)},
+                new () { CompanyName = "TS-Electrical", Volume = random.Next(1,900)},
+                new () { CompanyName = "LS-Foods", Volume = random.Next(1,900)},
+                new () { CompanyName = "MS-Healthcare", Volume = random.Next(1,900)},
+                new () { CompanyName = "LS-Pharmas", Volume = random.Next(1,900)},
+                new () { CompanyName = "TS-Healthcare", Volume = random.Next(1,900)}
             };
             return marketData;
         }

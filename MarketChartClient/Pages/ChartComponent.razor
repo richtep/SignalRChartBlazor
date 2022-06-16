@@ -2,7 +2,10 @@
 @using  Microsoft.AspNetCore.SignalR.Client;
 @using SharedModels
 @inject IJSRuntime _js
-@inject MarketChartClient.HttpCaller.MarketDataCaller _service;
+@inject HttpCaller.MarketDataCaller _service;
+
+
+
 <h3>Chart Component</h3>
 
 <div>
@@ -120,13 +123,13 @@
     async Task _generateLineChartTask()
     {
         MarketDataListener("marketLineChart");
-         ReceivedMarketDataListener();
+        ReceivedMarketDataListener();
         await _service.GetMarketDataAsync();
     }
      async Task _generateBarChartTask()
     {
       MarketDataListener("marketBarChart"); 
-       ReceivedMarketDataListener();
-         await _service.GetMarketDataAsync();
+      ReceivedMarketDataListener();
+      await _service.GetMarketDataAsync();
     }
 }
