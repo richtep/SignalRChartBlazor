@@ -36,8 +36,11 @@ app.UseCors("cors");
 app.UseAuthorization();
 app.MapControllers();
 
- 
+
 //Add the SignalR Hub
 app.MapHub<MarketHub>("/marketdata");
- 
+app.MapHub<MarketHub>("/labelText");
+
+
+
 app.Run();

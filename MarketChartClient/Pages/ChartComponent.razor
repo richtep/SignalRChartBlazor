@@ -84,7 +84,7 @@
 
     private void MarketDataListener(string chartType)
     {
-        _hubConn.On<List<Market>>("SendMarketStatusData", async (data) =>
+        _hubConn.On<List<Market>>("SendMarketStatusData", async data =>
         {
             MarketData = new List<Market>(); 
             foreach (var item in data)
@@ -94,11 +94,9 @@
                 _ySource.Add(item.Volume);
             }
 
-
             _source.Add(_ySource);
             _source.Add(_xSource);
-
-
+            
             MarketData = data;
 
             StateHasChanged();

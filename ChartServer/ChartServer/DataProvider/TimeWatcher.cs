@@ -29,7 +29,7 @@ public class TimeWatcher
             (object? obj) => 
         {
             _executor();
-            if ((DateTime.Now - WatcherStarted).TotalSeconds <= 23) return;
+            if ((DateTime.Now - WatcherStarted).TotalSeconds <= 63) return;
             IsWatcherStarted = false;
             _timer?.Dispose();
         }, _autoResetEvent, callBackDelayBeforeInvokeCallback, timeIntervalBetweenInvokeCallback);
