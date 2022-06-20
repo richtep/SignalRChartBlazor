@@ -1,6 +1,4 @@
-using ChartServer.DataProvider;
 using ChartServer.RHub;
-using SharedModels;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -13,8 +11,6 @@ builder.Services.AddCors(option => {
     });
 });
 builder.Services.AddSignalR();
-// Register the Watcher
-builder.Services.AddScoped<TimeWatcher>();
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
@@ -38,9 +34,6 @@ app.MapControllers();
 
 
 //Add the SignalR Hub
-app.MapHub<MarketHub>("/marketdata");
-app.MapHub<MarketHub>("/labelText");
-
-
+app.MapHub<LabelTextHub>("/labelText");
 
 app.Run();

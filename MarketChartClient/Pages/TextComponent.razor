@@ -1,53 +1,19 @@
 ﻿@page "/labeltext"
 @using  Microsoft.AspNetCore.SignalR.Client;
-@using SharedModels
 @inject IJSRuntime _js
-@inject HttpCaller.MarketDataCaller _service;
+@inject HttpCaller.LabelTextCaller _service;
 
 
 
-<h3>Chart Component</h3>
+<h3>Signal R</h3>
 
 <div>
     <div class="container">
-        <table class="table table-bordered table-striped">
-            <tbody>
-            <tr>
-                <td>
-                    <button class="btn btn-success"
-                            @onclick="@_readLabelTextTask">Read Label Text</button>
-                </td>
-                 
-            </tr>
-            </tbody>
-        </table>
-        
-        
-        <br><br><br><br>
+     
+        <h5>Read label text:   
         
         <label>@ReceivedLabelText</label>
-
-        
-        <!-- 
-        <div id="market"></div>
-        <table class="table table-bordered table-striped">
-        <thead>
-            <tr>
-                <th>Company Name</th>
-                <th>Volume</th>
-            </tr>
-        </thead>
-        <tbody>
-           @foreach (var item in MarketData)
-           {
-               <tr>
-                   <td>@item.CompanyName</td>
-                   <td>@item.Volume</td>
-               </tr>
-           }
-        </tbody>
-        </table>
-        -->
+        </h5>
     <hr/>
     <div class="container">
         @_connectionStatusMessage
@@ -59,21 +25,23 @@
 @code {
     private HubConnection _hubConn;
     private string _connectionStatusMessage;
-    public List<Market> MarketData = new (); 
-    public List<Market> MarketReceivedData = new ();
-
+    
     public string ReceivedLabelText = "initialText";
 
     
     protected override async Task OnInitializedAsync()
     {
         
-        await _service.GetLabelText();
-        await Start();
+       // await _service.GetLabelText();
+        await StartHub();
+
+        LabelTextListener();
+        await _service.GetLabelTextAsync();
+
     }
 
 
-    private async Task Start()
+    private async Task StartHub()
     {
         _hubConn = new HubConnectionBuilder().WithUrl("https://localhost:7193/labelText").Build();
         await _hubConn.StartAsync();
@@ -89,24 +57,6 @@
             StateHasChanged();
         });
     }
-
-    private void ReceivedLabelTextListener()
-    {
-        _hubConn?.On<string>("CommunicateLabelText", data =>
-        {
-            ReceivedLabelText = data;
-            StateHasChanged();
-        });
-    }
-
  
     public async Task Dispose() => await _hubConn.DisposeAsync();
-    
-    async Task _readLabelTextTask()
-    {
-        LabelTextListener();
-        ReceivedLabelTextListener();
-        await _service.GetLabelTextAsync();
-    }
-   
 }

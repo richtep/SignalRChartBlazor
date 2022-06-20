@@ -12,10 +12,4 @@
     <PackageReference Include="Microsoft.AspNetCore.SignalR.Client" Version="6.0.1" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Reference Include="SharedModels">
-      <HintPath>..\ChartServer\SharedModels\bin\Debug\net6.0\SharedModels.dll</HintPath>
-    </Reference>
-  </ItemGroup>
-
 </Project>

@@ -1,5 +1,4 @@
-﻿using ChartServer.DataProvider;
-using ChartServer.RHub;
+﻿using ChartServer.RHub;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
 
@@ -9,13 +8,11 @@ namespace ChartServer.Controllers
     [ApiController]
     public class TextController : ControllerBase
     {
-        private readonly IHubContext<MarketHub> _marketHub;
-        private readonly TimeWatcher _watcher;
-
-        public TextController(IHubContext<MarketHub> mktHub, TimeWatcher watch)
+        private readonly IHubContext<LabelTextHub> _marketHub;
+        
+        public TextController(IHubContext<LabelTextHub> mktHub)
         {
             _marketHub = mktHub;
-            _watcher = watch;
         }
 
         [HttpGet("{textValue}")]
